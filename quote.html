@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="敲敲網 室內裝潢 水電修繕 衛浴修繕 老師傅 專家 高品質服務 合理的收費 " name="keywords">
+    <meta content="敲敲打打 室內裝潢 水電修繕 衛浴修繕 老師傅 專家" name="description">
+    <title>Quotation KnockKnock</title>
+    <style>
+        body {
+            font-family:"微軟正黑體", Arial, sans-serif;
+            background-color:#666666 ; /* #f4f4f4 */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #ffe468;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #030f27; /* #4caf50  */
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color:#4364CC ;
+        }
+
+        #confirmation-message, #email-message, #notify-message {
+            color:  #030f27;  /* #4caf50   */
+            margin-top: 10px;
+        }
+
+         /* Styles remain the same as in the previous code */
+         .error-message {
+            color: #ff0000;
+            margin-top: 10px;
+        }
+    </style>
+	
+	<!-- for call EmaiJS add by Eric  -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>	
+	
+    <script type="text/javascript">
+      (function() {
+         /* https://dashboard.emailjs.com/admin/account */
+         emailjs.init('r5JfYe93cOJxAgE4k');
+       })();
+     </script>
+	
+	<script type="text/javascript" src="js/sendEmailbyJS.js"></script>
+
+</head>
+	
+<body>
+
+<form id="contactForm">
+	<label for="title" style="text-align: center"><h2>歡迎向我們詢價</h2></label>  
+    <label for="username">您的姓名:</label>  
+    <input type="text" id="username" name="username" required>
+
+    <label for="email">您的Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="subject">您詢問的主題:</label>
+    <input type="text" id="subject" name="subject" required>
+
+    <label for="message">請您簡述問題內容:</label>
+    <textarea id="message" name="message" rows="4" required></textarea>
+
+    <button type="button" onclick="submitForm()">確認送出</button>
+    <button type="button" onclick="cancel()">取消重填</button>
+	<button type="button" onclick="goUrl()">離開(回首頁)</button>
+
+    <p id="confirmation-message"></p>
+	<p id="notify-message"></p>
+	<p id="email-message"></p>
+    <p class="error-message" id="name-error"></p>
+    <p class="error-message" id="email-error"></p>
+    <p class="error-message" id="subject-error"></p>
+    <p class="error-message" id="message-error"></p>
+    <p class="error-message" id="submission-error"></p>
+
+</form>
+
+<script type="text/javascript">
+	
+	function cancel() {
+		document.getElementById("contactForm").reset();
+        // Clear messages <p>
+        var confirmationMessage = document.getElementById("confirmation-message");
+		var notifyMessage = document.getElementById("notify-message");
+        var emailMessage = document.getElementById("email-message");
+
+        confirmationMessage.textContent = "";
+        notifyMessage.textContent = "";
+        emailMessage.textContent = "";
+
+	}    
+	
+	function goUrl() {
+		location.href = 'index.html';
+	}
+	
+    function submitForm() {
+        // Reset error messages
+        document.getElementById("name-error").textContent ="";
+        document.getElementById("email-error").textContent ="";
+        document.getElementById("subject-error").textContent ="";
+        document.getElementById("message-error").textContent ="";
+        document.getElementById("submission-error").textContent ="";
+		// console.log("Debug_01");
+
+        // Get form values
+        var username = document.getElementById("username").value;
+        var email = document.getElementById("email").value;
+        var subject = document.getElementById("subject").value;
+        var message = document.getElementById("message").value;
+        var msg = '敲敲裝修: ' + username + '|' + email  + '|' + subject+ '|' + message;
+		console.log(msg);  // for DEBUG
+
+        // Validate form data
+        if (!username) {
+            document.getElementById("name-error").textContent = "Name is required.";
+            return;
+        }
+
+        if (!email) {
+            document.getElementById("email-error").textContent = "Email is required.";
+            return;
+        }
+
+        if (!subject) {
+            document.getElementById("subject-error").textContent = "Subject is required.";
+            return;
+        }
+
+        if (!message) {
+            document.getElementById("message-error").textContent = "Message is required.";
+            return;
+        }
+
+        // Simulate form submission success (you would replace this with actual form submission logic)
+        var confirmationMessage = document.getElementById("confirmation-message");
+		var notifyMessage = document.getElementById("notify-message");
+		
+		// console.log("Debug_02");
+        // Eric Su registered service for send notify to the App of ntfy.sh
+        var url = "https://ntfy.sh/kk_alert";
+        var data =msg ;
+   
+        // console.log("DEBUG_03");
+		
+        fetch(url, {
+                    method: "POST", // or 'PUT'
+                    body: JSON.stringify(data), // data can be `string` or {object}!
+                    headers: new Headers({
+                            "Content-Type": "application/json",
+                    }),
+        })
+        .then((res) => { 
+					   res.json();
+					   console.log("Notify Sent Success: ", res);
+					   notifyMessage.textContent = "即時通知 發送成功";
+					   
+	    })
+        .catch((error) => {
+					   console.error("Notify Sent Error: ", error);
+					   notifyMessage.textContent = "即時通知 發送失敗!";
+	    });
+                  
+        // console.log("DEBUG_04");
+
+        confirmationMessage.textContent = "報價表單 發送成功!";
+		// This function locate at 'js/sendEmailbyJS.js' 
+		sendEmailbyJS();
+    }
+</script>
+
+</body>
+</html>
